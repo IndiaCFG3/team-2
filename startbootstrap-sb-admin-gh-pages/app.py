@@ -55,8 +55,7 @@ def register():
         confirm_password = request.form['confirm_password']
         user = auth.create_user_with_email_and_password(
             request.form['email'], request.form['password'])
-        folder_name = request.form['fname']+request.form['lname'] + \
-            str(auth.get_account_info(user['idToken'])['users'][0]['localId'])
+        folder_name = request.form['fname']+request.form['lname'] + str(auth.get_account_info(user['idToken'])['users'][0]['localId'])
         database.child("users").child(folder_name).update({
             'fname': request.form['fname'],
             'lname': request.form['lname'],
