@@ -25,6 +25,16 @@ auth = firebase.auth()
 
 @app.route('/')
 def index():
+    users = []
+    users = database.child("users").get().val()
+    projects = []
+    projects = database.child("project").get().val()
+    session["users"] = []
+    session["projects"] = []
+    for project in projects.values():
+        session["projects"].append(project)
+    for user in users.values():
+        session["users"].append(user)
     return render_template('index.html')
 
 
@@ -35,9 +45,17 @@ def login():
             request.form['email'].strip(), request.form['password'])
         users = []
         users = database.child("users").get().val()
+        projects = []
+        projects = database.child("project").get().val()
+        session["users"] = []
+        session["projects"] = []
+        for project in projects.values():
+            session["projects"].append(project)
+        print(session['projects'])
         # print(auth.get_account_info(user_login['idToken']))
 
         for user in users.values():
+            session["users"].append(user)
             # print(user['primary_key'] == user_login['idToken'])
             if(user['email'] == request.form['email']):
                 session["user"] = user.copy()
@@ -69,7 +87,40 @@ def register():
 
 @app.route('/add_project', methods=['POST', 'GET'])
 def add_project():
-    return render_template('add_project.html')
+    if request.method == 'POST':
+        project_name = request.form['project_name']
+        project_location = request.form['project_location']
+        project_form_link = request.form['project_form_link']
+        employees = [session["user"]['fname'] + " " + session["user"]['lname']]
+        project = {
+            'project_name': project_name,
+            'project_location': project_location,
+            'project_form_link': project_form_link,
+            'employees': employees
+        }
+        database.child('project').child(
+            project_name+project_location).update(project)
+        return redirect('/')
+
+
+@app.route('/add_employee', methods=['GET', 'POST'])
+def add_employee():
+    if request.method == 'POST':
+        employee_name = request.form['employee_name']
+        project_name = request.form['project_name']
+        proj = {}
+
+        for project in session['projects']:
+
+            if project['project_name'] == project_name:
+                proj = project.copy()
+        employees = database.child('project').child(
+            proj['project_name']+proj['project_location']).child('employees').get().val()
+        employees.append(employee_name)
+        database.child('project').child(
+            proj['project_name']+proj['project_location']).update({'employees': employees})
+        return redirect('/')
+    return render_template('/add_employee.html')
 
 
 if __name__ == '__main__':
