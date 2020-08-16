@@ -3,74 +3,52 @@
 <div id="layoutSidenav">
   {% include "./includes/sidebar.html" %}
   <div id="layoutSidenav_content">
-    <div class="container">
-      <h3 class="mt-4">Design Your Card</h3>
-      <hr />
-      <ol class="breadcrumb mb-4">
-        <li class="breadcrumb-item"><a href="/">Dashboard</a></li>
-        <li class="breadcrumb-item active">Add Project</li>
-      </ol>
-      <div class="card mb-4">
-        <div class="card-body">
-          <form action="/add_project" method="POST">
-            <legend>Project Details</legend>
-            <hr />
-            <div class="form-group mt-2">
-              <div class="row">
-                <div class="col-md-2">
-                  <label for="Project Name"><h6>Project Name:</h6></label>
-                </div>
-                <div class="col-md-8">
-                  <input
-                    type="text"
-                    placeholder="Project Name"
-                    name="project_name"
-                    class="form-control"
-                  />
-                </div>
-              </div>
+    <main>
+      <div class="container">
+        <h1 class="mt-4">Projects</h1>
+        <hr />
+        <ol class="breadcrumb mb-4">
+          <li class="breadcrumb-item active">Dashboard</li>
+          <li class="breadcrumb-item">Projects</li>
+        </ol>
+        <div class="card">
+          <div class="card-body">
+            <div class="table-responsive">
+              <table
+                class="table table-bordered"
+                id="dataTable"
+                width="100%"
+                cellspacing="0"
+              >
+                <thead>
+                  <tr>
+                    <th>Name</th>
+                    <th>Position</th>
+                    <th>Form Link</th>
+                  </tr>
+                </thead>
+                <tfoot>
+                  <tr>
+                    <th>Name</th>
+                    <th>Position</th>
+                    <th>Form Link</th>
+                  </tr>
+                </tfoot>
+                <tbody>
+                  {% for project in session.projects %}
+                  <tr>
+                    <td>{{project.project_name}}</td>
+                    <td>{{project.project_location}}</td>
+                    <td>{{project.project_form_link}}</td>
+                  </tr>
+                  {% endfor %}
+                </tbody>
+              </table>
             </div>
-            <div class="form-group mt-2">
-              <div class="row">
-                <div class="col-md-2">
-                  <label for="Project Location"
-                    ><h6>Project Location:</h6></label
-                  >
-                </div>
-                <div class="col-md-8">
-                  <input
-                    type="text"
-                    placeholder="Project Location"
-                    name="project_location"
-                    class="form-control"
-                  />
-                </div>
-              </div>
-            </div>
-            <div class="form-group">
-              <div class="row">
-                <div class="col-md-2">
-                  <label for="Project Form Link"
-                    ><h6>Project Form Link:</h6></label
-                  >
-                </div>
-                <div class="col-md-8">
-                  <input
-                    type="text"
-                    placeholder="Project Form Link"
-                    name="project_form_link"
-                    class="form-control"
-                  />
-                </div>
-              </div>
-            </div>
-            <button type="submit" class="btn btn-primary">
-              <i class="fas fa-plus"></i>Add Project
-            </button>
-          </form>
+          </div>
         </div>
       </div>
-    </div>
+    </main>
     <footer class="py-4 bg-light mt-auto">
       <div class="container-fluid">
         <div class="d-flex align-items-center justify-content-between small">

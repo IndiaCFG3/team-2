@@ -25,22 +25,36 @@ auth = firebase.auth()
 
 @app.route('/')
 def index():
-    users = []
-    users = database.child("users").get().val()
-    projects = []
-    projects = database.child("project").get().val()
-    session["users"] = []
-    session["projects"] = []
-    for project in projects.values():
-        session["projects"].append(project)
-    for user in users.values():
-        session["users"].append(user)
-    return render_template('index.html')
+    if(session['logged_in']):
+        users = []
+        users = database.child("users").get().val()
+        projects = []
+        projects = database.child("project").get().val()
+        session["users"] = []
+        session["projects"] = []
+        for project in projects.values():
+            session["projects"].append(project)
+        for user in users.values():
+            session["users"].append(user)
+        return render_template('index.html')
+    else:
+        return redirect('/login')
+
+
+@app.route('/projects')
+def projects():
+    return render_template('add_project.html')
+
+
+@app.route('/home')
+def home():
+    return render_template('home.html')
 
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
+        session['logged_in'] = True
         user_login = auth.sign_in_with_email_and_password(
             request.form['email'].strip(), request.form['password'])
         users = []
@@ -121,6 +135,13 @@ def add_employee():
             proj['project_name']+proj['project_location']).update({'employees': employees})
         return redirect('/')
     return render_template('/add_employee.html')
+
+
+@app.route('/logout')
+def logout():
+    session.pop("user", None)
+    session['logged_in'] = False
+    return redirect('/home')
 
 
 if __name__ == '__main__':
