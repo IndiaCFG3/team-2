@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect,session
+from flask import Flask, render_template, request, redirect, session
 import pyrebase
 
 
@@ -65,6 +65,11 @@ def register():
         })
         return redirect('/login')
     return render_template('register.html')
+
+
+@app.route('/add_project', methods=['POST', 'GET'])
+def add_project():
+    return render_template('add_project.html')
 
 
 if __name__ == '__main__':
