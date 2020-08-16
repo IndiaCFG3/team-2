@@ -33,7 +33,15 @@ def login():
     if request.method == 'POST':
         user_login = auth.sign_in_with_email_and_password(
             request.form['email'].strip(), request.form['password'])
-        return redirect('/')
+        users = []
+        users = database.child("users").get().val()
+        # print(auth.get_account_info(user_login['idToken']))
+
+        for user in users.values():
+            # print(user['primary_key'] == user_login['idToken'])
+            if(user['email'] == request.form['email']):
+                session["user"] = user.copy()
+                return redirect('/')
     return render_template('login.html')
 
 
@@ -47,6 +55,14 @@ def register():
         confirm_password = request.form['confirm_password']
         user = auth.create_user_with_email_and_password(
             request.form['email'], request.form['password'])
+        folder_name = request.form['fname']+request.form['lname'] + \
+            str(auth.get_account_info(user['idToken'])['users'][0]['localId'])
+        database.child("users").child(folder_name).update({
+            'fname': request.form['fname'],
+            'lname': request.form['lname'],
+            'email': request.form['email'],
+            'roles': request.form['roles']
+        })
     return render_template('register.html')
 
 
